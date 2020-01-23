@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Alert } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 
 import api from './services/api';
 
 export default class App extends Component {
 
   state = {
-    clients: '',
+    clients: [],
+    clientsInfo: {},
   }
 
   componentDidMount() {
@@ -22,13 +23,17 @@ export default class App extends Component {
   render() {
 
     const { clients } = this.state;
-    console.log(clients);
 
     return (
       <View style={styles.container}>
-        <View style={styles.card}>
-          <Text style={styles.name}>A</Text>
-        </View>
+        <ScrollView>
+          { clients.map((client) => (
+            <TouchableOpacity key={client.id} style={styles.card}>
+              <Text style={styles.name}>{client.nome} {client.sobrenome}</Text>
+              <Text style={styles.cpf}>{client.cpf}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
       </View>
     );
   }
@@ -38,22 +43,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#17171b',
-    alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 20,
+    alignItems: 'center',
+    paddingVertical: 50,
   },
 
   card: {
-    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 350,
     height: 150,
     borderRadius: 5,
-    backgroundColor: 'rgba(0,0,0,.7)',
-    padding: 10,
+    marginTop: 20,
+    backgroundColor: 'rgba(0,0,0,.2)',
   },
 
   name: {
     fontSize: 16,
-    color:'red',
+    color:'#fff',
     fontWeight: 'bold',
+  },
+
+  cpf: {
+    color: '#999',
   }
 });
