@@ -1,42 +1,55 @@
-import React, { Component } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, TextInput, View, ScrollView, TouchableOpacity } from 'react-native';
 
 import api from './src/services/api';
 
-export default class App extends Component {
+export default function App() {
 
-  state = {
-    clients: [],
-    clientsInfo: {},
+  const [clients, setClients] = useState([]);
+  const [cnpj, setCnpj] = useState('');
+
+  useEffect(() => {
+    // loadClients();
+  }, []);
+
+  async function loadClients() {
+
+    const response = await api.get(`/clientes/${cnpj}`);
+
+    setClients(response.data);
+    setCnpj('');
   }
 
-  componentDidMount() {
-    this.loadClients();
-  }
+  return (
+    <View style={styles.container}>
 
-  loadClients = async () => {
-    const response = await api.get('/clientes');
+      <TextInput
+          style={styles.searchForm}
+          keyboardType="number-pad"
+          placeholder="Faça sua busca com CNPJ"
+          placeholderTextColor="#999"
+          autoCapitalize="none"
+          autoCorrect={false}
+          underlineColorAndroid={'transparent'}
+          value={cnpj}
+          onChangeText={setCnpj}
+        />
 
-    this.setState({ clients: response.data });
-  }
+      <TouchableOpacity onPress={loadClients} style={{padding:20, backgroundColor:'red'}}>
+        <Text>Clicar</Text>
+      </TouchableOpacity>
 
-  render() {
+      <ScrollView>
+        { clients.map((client) => (
+          <TouchableOpacity key={client.cnpj} style={styles.card}>
+            <Text style={styles.name}>{client.razao_social}</Text>
+            <Text style={styles.name}>{client.cnpj}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
+  );
 
-    const { clients } = this.state;
-
-    return (
-      <View style={styles.container}>
-        <ScrollView>
-          { clients.map((client) => (
-            <TouchableOpacity key={client.id} style={styles.card}>
-              <Text style={styles.name}>{client.nome} {client.sobrenome}</Text>
-              <Text style={styles.cpf}>{client.cpf}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-    );
-  }
 }
 
 const styles = StyleSheet.create({
@@ -46,6 +59,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 50,
+    paddingHorizontal: 20,
   },
 
   card: {
@@ -66,5 +80,18 @@ const styles = StyleSheet.create({
 
   cpf: {
     color: '#999',
+  },
+
+  searchForm: {
+    width: '100%',
+    marginTop: 20,
+    paddingHorizontal: 20,
+    height: 70,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: 'red',
+    fontSize: 16,
+    fontWeight: 'bold',
+    color:'#17171b',
   }
 });
