@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 
-import api from './services/api';
+import api from './src/services/api';
 
 export default class App extends Component {
 
